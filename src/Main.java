@@ -1,5 +1,6 @@
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 
 import static java.time.Month.FEBRUARY;
@@ -371,33 +372,18 @@ public class Main {
         }
 
 
-        String nascimento = Leitura.dados("Digite a data de nascimento do aluno. dd/mm/year");
-
-        while(quebraLoop2) {
-
-            boolean teste = nascimento.matches("^(?:0[1-9]|[12]\\d|3[01])([/.-])(?:0[1-9]|1[012])\\1(?:19|20)\\d\\d$");
-
-            if (nascimento == null || nascimento.isEmpty()){
-                System.out.println("\nData inválida. Digite novamente no formato dd/mm/aaaa ");
-                nascimento = Leitura.dados("\nDigite a data de nascimento do aluno. dd/mm/year");
 
 
-            }
-            if (!teste) {
-                System.out.println("\nData formatada errada. dd/mm/aaaa");
-                nascimento = Leitura.dados("\nDigite a data de nascimento do aluno. dd/mm/year");
 
-                continue;
-            }
 
-            dataFormatada = convertorParaData(nascimento);
+            dataFormatada = convertorParaData();
 
 
 
             System.out.println(dataFormatada);
 
 
-        }
+
 
         boolean aaa = !listarTurmasIndiceSigla();
         if (!aaa) {
@@ -439,41 +425,45 @@ public class Main {
 
     }
 
-    private static LocalDate convertorParaData(String nascimento) {
-        boolean quebraLoop = true;
+    private static LocalDate convertorParaData() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate nascimentoCerto = null;
 
-        String correcaoData = "";
 
 
-        while (quebraLoop) {
-            nascimentoCerto = LocalDate.parse(nascimento, formatter);
-            LocalDate dataAtual = LocalDate.now(ZoneOffset.UTC);
+        while (nascimentoCerto == null) {
+            String nascimento = Leitura.dados("Digite a data de nascimento do aluno. dd/mm/year");
 
-            LocalDate oi = null;
-            if (nascimentoCerto.isAfter(dataAtual)) {
-                System.out.println("Não pode nascer no futuro");
-                correcaoData = Leitura.dados("Digite a sua data de nascimento. dd/mm/aaaa");
-                oi = LocalDate.parse(correcaoData, formatter);
-                nascimentoCerto = oi;
+            try {
+                nascimentoCerto = LocalDate.parse(nascimento, formatter);
+                LocalDate dataAtual = LocalDate.now(ZoneOffset.UTC);
 
-            }
-            if(nascimentoCerto.isLeapYear()){
-                if(verificadorDeDia(nascimentoCerto)) {
-                    System.out.println("Só tem 28 dias em feveiro em ano bissexto bobão, mó rolê essa função slk arruma ae pfvr");
+                if (nascimentoCerto.isAfter(dataAtual)) {
+                    System.out.println("Não pode nascer no futuro");
 
-                    correcaoData = Leitura.dados("Digite a sua data de nascimento. dd/mm/aaaa");
+
                 }
-                oi = LocalDate.parse(correcaoData, formatter);
-                nascimentoCerto = oi;
+                boolean teste = nascimento.matches("^(?:0[1-9]|[12]\\d|3[01])([/.-])(?:0[1-9]|1[012])\\1(?:19|20)\\d\\d$");
+
+                if (nascimento == null || nascimento.isEmpty()){
+                    System.out.println("\nData inválida. Digite novamente no formato dd/mm/aaaa ");
+                    nascimento = Leitura.dados("\nDigite a data de nascimento do aluno. dd/mm/year");
+
+
+                }
+                if (!teste) {
+                    System.out.println("\nData formatada errada. dd/mm/aaaa");
+                    nascimento = Leitura.dados("\nDigite a data de nascimento do aluno. dd/mm/year");
+
+                }
+
+
+
+            } catch (DateTimeParseException e){
+                System.out.println("ESSE É O ERRO:" + e);
             }
 
-            System.out.println(nascimentoCerto);
-            quebraLoop = false;
         }
-
-
         return nascimentoCerto;
     }
 
