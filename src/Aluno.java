@@ -4,23 +4,26 @@ public class Aluno {
     private String nome;
     private LocalDate dataNascimento;
     private Turma turma;
-    boolean ativo;
+    private boolean ativo;
 
     public Aluno(String nome, LocalDate dataNascimento, Turma turma) {
         this.nome = nome;
         this.dataNascimento = dataNascimento;
         this.turma = turma;
+        this.ativo = true;
+
     }
 
 
-    public boolean isAtivo() {
 
+    public boolean isAtivo() {
         return ativo;
     }
 
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
     }
+
 
     public String getNome() {
         return nome;

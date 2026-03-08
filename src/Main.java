@@ -3,7 +3,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 
-import static java.time.Month.FEBRUARY;
 
 public class Main {
 
@@ -205,16 +204,16 @@ public class Main {
         }
         System.out.printf("\nO curso atual é: %s ", curso);
 
-        atualiza(idAtualizar, true);
+        atualizaTurma(idAtualizar, true);
 
         System.out.printf("\nA sigla atual é: %s ", sigla);
 
-        atualiza(idAtualizar, false);
+        atualizaTurma(idAtualizar, false);
 
 
     }
 
-    private static void atualiza(int idAtualizar, boolean auebaaaaaa) {
+    private static void atualizaTurma(int idAtualizar, boolean auebaaaaaa) {
         if (auebaaaaaa) {
 
             while (true) {
@@ -360,8 +359,7 @@ public class Main {
 
     private static void cadastrarAluno() {
         System.out.println("BEM VINDO AO CADASTRADOR DE ALUNOS");
-        boolean quebraLoop2 = true;
-        LocalDate dataFormatada = null;
+        LocalDate dataFormatada;
 
         String nome = Leitura.dados("Digite o nome do Aluno");
 
@@ -370,12 +368,6 @@ public class Main {
             nome = Leitura.dados("Digite o nome do Aluno");
 
         }
-
-
-
-
-
-
             dataFormatada = convertorParaData();
 
 
@@ -386,7 +378,7 @@ public class Main {
 
 
         boolean aaa = !listarTurmasIndiceSigla();
-        if (!aaa) {
+        if (aaa) {
             System.out.println("Não há turmas na lista, crie uma turma para adicionar o aluno nela");
             Leitura.dados("Aperte Enter para continuar");
             System.out.println("Redirecionando ao menu principal...");
@@ -398,66 +390,151 @@ public class Main {
         Turma turmaSelecionada = listaTurmas.get(idAtualizar);
 
 
-        System.out.println(turmaSelecionada);
-
         System.out.printf("""
                 Confirme as informações do Aluno
                 Nome: %s
-                Data de Nascimento: %d
-                Turma: %e""", nome, dataFormatada, turmaSelecionada);
-        String confirma = Leitura.dados("As informações do Aluno está correta? S/N").toUpperCase();
-        switch(confirma){
-            case "S":
+                Data de Nascimento: %s
+                Curso: %s""", nome, dataFormatada, turmaSelecionada.getCurso());
 
-                Aluno aluno = new Aluno(nome, dataFormatada, turmaSelecionada);
-                listaAlunos.add(aluno);
-                System.out.println("Aluno adicionado com sucesso!");
-                menuPrincipal();
+        while(true) {
+            String confirma = Leitura.dados("\nAs informações do Aluno está correta? S/N").toUpperCase();
 
-            case "N":
-                String opcao = Leitura.dados("Qual informação está incorreta?");
+            switch (confirma) {
+                case "S":
 
-            default:
-                System.out.println("Opção inválida. Digite novamente!");
+                    Aluno aluno = new Aluno(nome, dataFormatada, turmaSelecionada);
+                    listaAlunos.add(aluno);
+                    System.out.println("Aluno adicionado com sucesso!");
+                    menuPrincipal();
+                case "N":
+                    String newNome = atualizaAluno().nome();
+                    LocalDate newDate = atualizaAluno().dataAniversario();
+                    Turma newTurma = atualizaAluno().turma();
+                    System.out.println(newNome+ newDate +newTurma);
+
+                    if(newNome == null){
+                        newNome = nome;
+                    }
+                    if(newDate == null){
+                        newDate = dataFormatada;
+                    }
+                    if(newTurma == null){
+                        newTurma = turmaSelecionada;
+                    }
+                    Aluno newAluno = new Aluno(newNome, newDate, newTurma);
+                    listaAlunos.add(newAluno);
+                    System.out.println("Aluno adicionado com sucesso!");
+                    menuPrincipal();
+
+
+                default:
+                    System.out.println("Opção inválida. Digite novamente!");
+                    continue;
+            }
         }
 
+    }
+
+
+    private static DadosModificados atualizaAluno() {
+
+        String newNome = null;
+        boolean quebreLoop =true;
+        while (quebreLoop) {
+            String opcaoNome = Leitura.dados("Deseja modificar o nome do Aluno? (S/N)").toUpperCase();
+            switch (opcaoNome) {
+                case "S":
+
+                    newNome = Leitura.dados("Digite o nome do Aluno: ");
+                    while (!isCharacter(newNome)) {
+                        System.out.println("Nome do Aluno inválido! Não use números ou caracteres especiais, por favor");
+                        newNome = Leitura.dados("Digite o nome do Aluno: ");
+                    }
+                    quebreLoop = false;
+                    case "N":
+                    quebreLoop = false;
+                default:
+                    System.out.println("Opção inválida, digite novamente");
+                    continue;
+            }
+        }
+
+        LocalDate newData = null;
+        while (true) {
+            String opcaoData = Leitura.dados("Deseja modificar a data de Aniversário do Aluno? (S/N)").toUpperCase();
+            switch (opcaoData) {
+                case "S":
+                    newData = convertorParaData();
+                    System.out.println("Data atualizada com sucesso!");
+                    break;
+                case "N":
+                    break;
+                default:
+                    System.out.println("Opção inválida, digite novamente");
+                    continue;
+            }
+            break;
+        }
+        Turma turmaSelecionada = null;
+        while (true) {
+            String opcaoTurma = Leitura.dados("Deseja modificar a turma do aluno? (S/N)").toUpperCase();
+            switch (opcaoTurma) {
+                case "S":
+
+                    boolean aaa = !listarTurmasIndiceSigla();
+                    if (aaa) {
+                        System.out.println("Não há turmas na lista, crie uma turma para adicionar o aluno nela");
+                        Leitura.dados("Aperte Enter para continuar");
+                        System.out.println("Redirecionando ao menu principal...");
+                        menuPrincipal();
+
+                    }
+                    int idAtualizar = validaIdTurma();
+
+                    turmaSelecionada = listaTurmas.get(idAtualizar);
+                    break;
+                case "N":
+                    break;
+                default:
+                    System.out.println("Opção inválida, digite novamente");
+                    continue;
+
+            }
+            break;
+        }
+        return new DadosModificados(newNome, newData, turmaSelecionada);
 
 
     }
 
+
     private static LocalDate convertorParaData() {
+        final LocalDate dataAtual = LocalDate.now(ZoneOffset.UTC);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate nascimentoCerto = null;
 
 
-
         while (nascimentoCerto == null) {
             String nascimento = Leitura.dados("Digite a data de nascimento do aluno. dd/mm/year");
-
             try {
                 nascimentoCerto = LocalDate.parse(nascimento, formatter);
-                LocalDate dataAtual = LocalDate.now(ZoneOffset.UTC);
-
                 if (nascimentoCerto.isAfter(dataAtual)) {
                     System.out.println("Não pode nascer no futuro");
-
-
+                    nascimento = Leitura.dados("\nDigite a data de nascimento do aluno. dd/mm/year");
                 }
                 boolean teste = nascimento.matches("^(?:0[1-9]|[12]\\d|3[01])([/.-])(?:0[1-9]|1[012])\\1(?:19|20)\\d\\d$");
 
-                if (nascimento == null || nascimento.isEmpty()){
-                    System.out.println("\nData inválida. Digite novamente no formato dd/mm/aaaa ");
-                    nascimento = Leitura.dados("\nDigite a data de nascimento do aluno. dd/mm/year");
-
-
-                }
                 if (!teste) {
-                    System.out.println("\nData formatada errada. dd/mm/aaaa");
+                    System.out.println("Esse ano ai é muito antigo pra vc ter nascido");
                     nascimento = Leitura.dados("\nDigite a data de nascimento do aluno. dd/mm/year");
-
                 }
-
-
+                Period periodo = Period.between(nascimentoCerto,dataAtual);
+                System.out.println(periodo.getYears());
+                if(periodo.getYears() < 10 || periodo.getYears() > 25){
+                    System.out.println("Idade não permitida para o aluno mínimo 10 e máximo 25");
+                    System.out.println("Redirecionando ao menu...");
+                    menuAlunos();
+                }
 
             } catch (DateTimeParseException e){
                 System.out.println("ESSE É O ERRO:" + e);
@@ -467,54 +544,22 @@ public class Main {
         return nascimentoCerto;
     }
 
-    private static boolean verificadorDeDia(LocalDate nascimentoCerto) {
-        int day = nascimentoCerto.getDayOfMonth();
-        Month mes = nascimentoCerto.getMonth();
-        if (!nascimentoCerto.isLeapYear()) {
-            
-            if (mes == FEBRUARY) {
-                if (day > 28) {
-                    return true;
-                }
-            }
-
-        }
-        else if (nascimentoCerto.isLeapYear()){
-            if(mes == FEBRUARY){
-                if (day > 29){
-                    return false;
-                }
-                
-            }
-        }
-        return true;
-
-    }
-
-
-    private static boolean isName(String nome) {
-
-        boolean oi = nome.matches(" ^[A-Z][a-zà-úA-ZÀ-Ú']+(?:\\s[A-Z][a-zà-úA-ZÀ-Ú']+)*$");
-        System.out.println(oi);
-        return oi;
-
-    }
-
     private static void listarAlunos() {
+        System.out.println(isVazioAlunos(listaAlunos));
         if(isVazioAlunos(listaAlunos)) {
-            System.out.println("Não há turmas cadastradas");
+            System.out.println("Não há alunos cadastradas");
             return;
         }
         for(Aluno a : listaAlunos){
             if (a.isAtivo())
-                System.out.println(a);
+                System.out.printf("1 - Aluno: %s Turma: %s Data de nascimento: %s ", a.getNome(), a.getTurma(), a.getDataNascimento());
         }
     }
 
     private static boolean isVazioAlunos(ArrayList<Aluno> listaAlunos) {
         if (listaAlunos.isEmpty()) return true;
 
-        for (Aluno aluno : listaAlunos){
+        for (Aluno aluno : listaAlunos) {
             if (aluno.isAtivo()) return false;
         }
 
