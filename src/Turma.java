@@ -1,8 +1,3 @@
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 
 public class Turma {
@@ -156,7 +151,7 @@ public class Turma {
 
     protected static String validarCurso() {
         String curso = Leitura.dados("Digite o curso: ");
-        while (!Main.isCharacter(curso)) {
+        while (Main.isCharacter(curso)) {
             System.out.println("Nome de curso inválido! Não use números ou caracteres especiais, por favor");
             curso = Leitura.dados("Digite o curso: ");
         }
