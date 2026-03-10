@@ -18,6 +18,12 @@ public class Aluno {
         this.ativo = true;
     }
 
+    public void atualizarCom(Aluno alunoNovo) {
+        this.nome = alunoNovo.getNome();
+        this.dataNascimento = alunoNovo.getDataNascimento();
+        this.turma = alunoNovo.getTurma();
+    }
+
     public boolean isAtivo() {
         return ativo;
     }
@@ -50,6 +56,17 @@ public class Aluno {
         this.turma = turma;
     }
 
+    @Override
+    public String toString() {
+        return String.format(
+            "Aluno [Nome: %-15s | Nasc: %s | Turma: %-10s | Status: %s]",
+            nome,
+            dataNascimento,
+            (turma != null ? turma : "Sem Turma"),
+            (ativo ? "Ativo" : "Inativo")
+        );
+    }
+
     //MÉTODOS
 
     protected static LocalDate convertorParaData() {
@@ -74,6 +91,7 @@ public class Aluno {
                     nascimento = Leitura.dados("\nDigite a data de nascimento do aluno. dd/mm/year");
                 }
                 Period periodo = Period.between(nascimentoCerto, dataAtual);
+                System.out.println(nascimentoCerto);
                 System.out.println("Idade: " + periodo.getYears());
                 if (periodo.getYears() < 14 || periodo.getYears() > 130) {
                     System.out.println("Idade não permitida para o aluno mínimo 10 e máximo 130");
@@ -109,7 +127,7 @@ public class Aluno {
 
                             break;
                     }
-                    System.out.println(atributo + " atualizado com sucesso!");
+                    System.out.println(atributo + " modificado com sucesso!");
                     quebraLoop = false;
                     break;
                 case "N":
@@ -172,53 +190,30 @@ public class Aluno {
         }
     }
 
-    protected static boolean isVazioAlunos() {
-        if (Main.listaAlunos.isEmpty()) return true;
-
-        for (Aluno aluno : Main.listaAlunos) {
-            if (aluno.isAtivo()) return false;
-        }
-
-        return true;
-    }
-
-    protected static Aluno VerificadorDadosAlunos(
-        String nome,
-        LocalDate dataFormatada,
-        Turma turmaSelecionada,
-        String atributo
-    ) {
-        String newName = null;
-        LocalDate newdata = null;
-        Turma newTurma = null;
-        switch (atributo) {
-            case "atTudo":
-                newName = Aluno.atualizarParcialAluno("nome").nome();
-                newdata = Aluno.atualizarParcialAluno("data").dataAniversario();
-                newTurma = Aluno.atualizarParcialAluno("turma").turma();
-            case "atNome":
-                newName = Aluno.atualizarParcialAluno("nome").nome();
-            case "atData":
-                newdata = Aluno.atualizarParcialAluno("data").dataAniversario();
-            case "atTurma":
-                newTurma = Aluno.atualizarParcialAluno("turma").turma();
-        }
+    protected static Aluno VerificadorDadosAlunos(String nome, LocalDate dataFormatada, Turma turmaSelecionada) {
+        String newName = Aluno.atualizarParcialAluno("nome").nome();
+        LocalDate newdata = Aluno.atualizarParcialAluno("data").dataAniversario();
+        Turma newTurma = Aluno.atualizarParcialAluno("turma").turma();
 
         if (newName == null) {
+            System.out.println("Nome mantido com sucesso!");
             newName = nome;
         }
         if (newdata == null) {
+            System.out.println("Data mantida com sucesso!");
             newdata = dataFormatada;
         }
         if (newTurma == null) {
+            System.out.println("Turma mantida com sucesso!");
+
             newTurma = turmaSelecionada;
         }
         return new Aluno(newName, newdata, newTurma);
     }
 
     protected static void listarAlunosIndice() {
-        if (Main.listaAlunos.isEmpty()) {
-            return;
+        if (Main.isVazio(1)) {
+            System.out.println("Tá vazio");
         }
         System.out.println("\nLista das Alunos:");
         for (int i = 0; i < Main.listaAlunos.size(); i++) {
