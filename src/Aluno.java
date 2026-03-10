@@ -3,6 +3,7 @@ import java.time.Period;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 
 public class Aluno {
@@ -54,6 +55,8 @@ public class Aluno {
 
     //MÉTODOS
 
+
+
     protected static LocalDate convertorParaData() {
         final LocalDate dataAtual = LocalDate.now(ZoneOffset.UTC);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -68,7 +71,7 @@ public class Aluno {
                     nascimento = Leitura.dados("\nDigite a data de nascimento do aluno. dd/mm/year");
                 }
                 boolean teste = nascimento.matches(
-                    "^(?:0[1-9]|[12]\\d|3[01])([/.-])(?:0[1-9]|1[012])\\1(?:19|20)\\d\\d$"
+                        "^(?:0[1-9]|[12]\\d|3[01])([/.-])(?:0[1-9]|1[012])\\1(?:19|20)\\d\\d$"
                 );
 
                 if (!teste) {
@@ -78,12 +81,12 @@ public class Aluno {
                 Period periodo = Period.between(nascimentoCerto, dataAtual);
                 System.out.println("Idade: " + periodo.getYears());
                 if (periodo.getYears() < 14 || periodo.getYears() > 130) {
-                    System.out.println("Idade não permitida para o aluno mínimo 10 e máximo 25");
+                    System.out.println("Idade não permitida para o aluno mínimo 10 e máximo 130");
                     System.out.println("Redirecionando ao menu...");
                     Main.menuAlunos();
                 }
             } catch (DateTimeParseException e) {
-                System.out.println("ESSE É O ERRO:" + e);
+                System.out.println("ESSE É O ERRO: " + e);
             }
         }
         return nascimentoCerto;
@@ -101,7 +104,7 @@ public class Aluno {
                 case "S":
                     switch (atributo) {
                         case "nome":
-                            newNome = atualizaNome();
+                            newNome = cadastraNome();
                             break;
                         case "data":
                             newData = Aluno.convertorParaData();
@@ -136,22 +139,52 @@ public class Aluno {
             Main.menuPrincipal();
 
         }
-        int idAtualizar = Turma.validaIdTurma();
+        int idAtualizar = Turma.validarId("turma");
 
 
         Turma turmaSelecionada = Turma.listaTurmas.get(idAtualizar);
         return turmaSelecionada;
     }
 
-    protected static String atualizaNome() {
+    protected static String cadastraNome() {
         String newNome = Leitura.dados("Digite o nome do Aluno: ");
-        while (Main.isCharacter(newNome)) {
-            System.out.println("Nome do Aluno inválido! Não use números ou caracteres especiais, por favor");
+        while (!isName(newNome)) {
             newNome = Leitura.dados("Digite o nome do Aluno: ");
         }
         return newNome;
     }
+    protected static boolean isName(String nome) {
+        String regex = "^[A-Za-zÀ-ÖØ-öø-ÿ ]+$";
 
+        if (nome == null || nome.trim().isEmpty()) {
+            System.out.println("Erro: O campo nome está vazio!");
+            return false;
+        }
+
+        if (nome.matches(regex)) {
+            if (nome.contains("  ")) {
+                System.out.println("Erro: O nome contém espaços duplos!");
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            if (nome.contains("-")) {
+                System.out.println("Erro: Hífen não é permitido! Use apenas espaços.");
+                return false;
+
+            } else if (Main.isCharacter(nome)) {
+                System.out.println("Erro: O nome não pode conter números!");
+                return false;
+
+            } else {
+                System.out.println("Erro: O nome contém símbolos ou caracteres especiais inválidos!");
+                return false;
+
+            }
+
+        }
+    }
     protected static boolean isVazioAlunos() {
         if (listaAlunos.isEmpty()) return true;
 
@@ -182,4 +215,16 @@ public class Aluno {
         return new Aluno(newName, newdata, newTurma);
 
     }
+    protected static boolean listarAlunosIndice() {
+
+        if (listaAlunos.isEmpty()) {
+            return false;
+        }
+        System.out.println("\nLista das Alunos:");
+        for (int i = 0; i < listaAlunos.size(); i++) {
+            if (listaAlunos.get(i).isAtivo()) System.out.printf("\n%d - %s", i + 1, listaAlunos.get(i).getNome());
+        }
+        return true;
+    }
+
 }

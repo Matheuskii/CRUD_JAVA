@@ -105,7 +105,7 @@ public class Main {
             return;
         }
         Turma.listarTurmasIndiceSigla();
-        int idExcluir = Turma.validaIdTurma();
+        int idExcluir = Turma.validarId("turma");
         if (confirmaExclusao()) {
             //listaTurmas.remove(opcaoUsuario);
             Turma.listaTurmas.get(idExcluir).setAtivo(false);
@@ -148,7 +148,7 @@ public class Main {
 
         Turma.listarTurmasIndiceSigla();
 
-        int idAtualizar = Turma.validaIdTurma();
+        int idAtualizar = Turma.validarId("turma");
 
         System.out.printf("O período atual é: %s", listaTurmas.get(idAtualizar).getPeriodo());
         Turma.atualizarParcial("período", idAtualizar);
@@ -194,6 +194,27 @@ public class Main {
         String textoSemNumeros = texto.replaceAll("\\d", "");
         return texto.isBlank() || !texto.equals(textoSemNumeros);
     }
+    protected static int validarItemLista(String opcao, String atributo) {
+        if (opcao.isBlank()) return -1;
+
+        int opcaoNumero = -1;
+
+        try {
+            opcaoNumero = Integer.parseInt(opcao);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+
+        int indiceLista = opcaoNumero - 1;
+        if(atributo == "turma"){
+            return indiceLista >= 0 && listaTurmas.size() > indiceLista ? indiceLista : -1;
+
+        }else{
+            return indiceLista >= 0 && listaAlunos.size() > indiceLista ? indiceLista : -1;
+        }
+
+    }
+
 
     private static void listarTurmas() {
         if (isVazio()) {
@@ -205,7 +226,31 @@ public class Main {
         }
     }
 
-    private static void excluirAluno() {}
+    private static void excluirAluno() {
+        if (Aluno.isVazioAlunos()) {
+            System.out.println("Não há alunos cadastrados");
+            return;
+        }
+        Aluno.listarAlunosIndice();
+
+        int idExcluir = Turma.validarId("aluna");
+        if (confirmaExclusao()) {
+            //listaTurmas.remove(opcaoUsuario);
+            listaAlunos.get(idExcluir).setAtivo(false);
+            System.out.println("Aluna excluída com sucesso!");
+            menuPrincipal();
+        } else {
+            System.out.println("Operação cancelada");
+            menuPrincipal();
+        }
+
+
+
+
+
+    }
+
+
 
     private static void atualizarAluno() {}
 
@@ -216,7 +261,7 @@ public class Main {
         System.out.println("BEM VINDO AO CADASTRADOR DE ALUNOS");
         LocalDate dataFormatada;
 
-        String nome = Aluno.atualizaNome();
+        String nome = Aluno.cadastraNome();
 
         dataFormatada = Aluno.convertorParaData();
 

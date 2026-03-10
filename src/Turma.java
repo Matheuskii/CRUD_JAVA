@@ -62,20 +62,6 @@ public class Turma {
 
     //MÉTODOS INSANOS
 
-    public static int validarItemLista(String opcao) {
-        if (opcao.isBlank()) return -1;
-
-        int opcaoNumero = -1;
-
-        try {
-            opcaoNumero = Integer.parseInt(opcao);
-        } catch (NumberFormatException e) {
-            return -1;
-        }
-
-        int indiceLista = opcaoNumero - 1;
-        return indiceLista >= 0 && listaTurmas.size() > indiceLista ? indiceLista : -1;
-    }
 
     protected static boolean listarTurmasIndiceSigla() {
         if (listaTurmas.isEmpty()) {
@@ -158,17 +144,17 @@ public class Turma {
         return curso;
     }
 
-    protected static int validaIdTurma() {
-        String opcao = Leitura.dados("\nDigite o número da turma desejada: ");
+    protected static int validarId(String atributo) {
+        String opcao = Leitura.dados("\nDigite o número da " +atributo +" desejada: ");
         int opcaoValida = -1;
         int opcaoUsuario = -1;
         while (opcaoValida == -1) {
-            opcaoUsuario = validarItemLista(opcao);
+            opcaoUsuario = Main.validarItemLista(opcao, atributo);
 
             if (opcaoUsuario == -1) {
                 System.out.println("Opção inválida! Digite novamente: ");
-                opcao = Leitura.dados("Digite o número da turma desejada: ");
-            } else {
+                opcao = Leitura.dados("\nDigite o número da " +atributo +" desejada: ");            }
+            else {
                 opcaoValida = opcaoUsuario;
             }
         }
