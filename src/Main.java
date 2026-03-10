@@ -1,11 +1,10 @@
 import java.time.*;
-
 import java.util.ArrayList;
 
 public class Main {
 
-    private static final ArrayList<Turma> listaTurmas = Turma.listaTurmas;
-    private static final ArrayList<Aluno> listaAlunos = Aluno.listaAlunos;
+    protected static final ArrayList<Turma> listaTurmas = new ArrayList<>();
+    protected static final ArrayList<Aluno> listaAlunos = new ArrayList<>();
 
     public static void main(String[] args) {
         menuPrincipal();
@@ -108,7 +107,7 @@ public class Main {
         int idExcluir = Turma.validarId("turma");
         if (confirmaExclusao()) {
             //listaTurmas.remove(opcaoUsuario);
-            Turma.listaTurmas.get(idExcluir).setAtivo(false);
+            listaTurmas.get(idExcluir).setAtivo(false);
             System.out.println("Turma excluída com sucesso!");
         } else {
             System.out.println("Operação cancelada");
@@ -194,6 +193,7 @@ public class Main {
         String textoSemNumeros = texto.replaceAll("\\d", "");
         return texto.isBlank() || !texto.equals(textoSemNumeros);
     }
+
     protected static int validarItemLista(String opcao, String atributo) {
         if (opcao.isBlank()) return -1;
 
@@ -206,15 +206,12 @@ public class Main {
         }
 
         int indiceLista = opcaoNumero - 1;
-        if(atributo == "turma"){
+        if (atributo == "turma") {
             return indiceLista >= 0 && listaTurmas.size() > indiceLista ? indiceLista : -1;
-
-        }else{
+        } else {
             return indiceLista >= 0 && listaAlunos.size() > indiceLista ? indiceLista : -1;
         }
-
     }
-
 
     private static void listarTurmas() {
         if (isVazio()) {
@@ -229,7 +226,7 @@ public class Main {
     private static void excluirAluno() {
         if (Aluno.isVazioAlunos()) {
             System.out.println("Não há alunos cadastrados");
-            return;
+            menuAlunos();
         }
         Aluno.listarAlunosIndice();
 
@@ -243,21 +240,41 @@ public class Main {
             System.out.println("Operação cancelada");
             menuPrincipal();
         }
-
-
-
-
-
     }
 
+    private static void atualizarAluno() {
+        System.out.println("BEM VINDO AO ATUALIZAR DE ALUNOS");
 
+        if (Aluno.isVazioAlunos()) {
+            System.out.println("Não há alunos cadastrados");
+            menuAlunos();
+        }
 
-    private static void atualizarAluno() {}
+        Aluno.listarAlunosIndice();
+
+        int idAtualizar = Turma.validarId("alunoo");
+
+        String nome = listaAlunos.get(idAtualizar).getNome();
+        LocalDate data = listaAlunos.get(idAtualizar).getDataNascimento();
+        Turma turma = listaAlunos.get(idAtualizar).getTurma();
+
+        System.out.printf("O nome do Aluno atual é: %s", nome);
+        String newNome = Aluno.VerificadorDadosAlunos(nome, data, turma, "atNome").getNome();
+        System.out.println(newNome);
+        listaAlunos.get(idAtualizar).setNome(newNome);
+        System.out.println("Nome atualizado com sucesso!");
+
+        System.out.printf("A data de nascimento do Aluno atual é: %s", data);
+
+        LocalDate dataAniversario = Aluno.VerificadorDadosAlunos(nome, data, turma, "atData").getDataNascimento();
+        listaAlunos.get(idAtualizar).setDataNascimento(dataAniversario);
+
+        System.out.printf("A Turma do Aluno atual é: %s", turma);
+        Turma newTurma = Aluno.VerificadorDadosAlunos(nome, data, turma, "atTurma").getTurma();
+        listaAlunos.get(idAtualizar).setTurma(newTurma);
+    }
 
     private static void cadastrarAluno() {
-
-        //TODO nome sem caracteres especiais ou espaços
-
         System.out.println("BEM VINDO AO CADASTRADOR DE ALUNOS");
         LocalDate dataFormatada;
 
@@ -278,35 +295,28 @@ public class Main {
             turmaSelecionada
         );
 
-
         boolean quebraLoop = true;
         while (quebraLoop) {
             String confirma = Leitura.dados("\nAs informações do Aluno está correta? (S/N) ").toUpperCase();
 
             switch (confirma) {
                 case "S":
+                    Aluno aluno = new Aluno(nome, dataFormatada, turmaSelecionada);
+                    listaAlunos.add(aluno);
+                    System.out.println("Aluno adicionado com sucesso!");
+                    menuPrincipal();
                     break;
                 case "N":
-                    Aluno newAluno = Aluno.VerificadorDadosAlunos(nome,dataFormatada, turmaSelecionada);
+                    Aluno newAluno = Aluno.VerificadorDadosAlunos(nome, dataFormatada, turmaSelecionada, "atTudo");
                     listaAlunos.add(newAluno);
                     System.out.println("Aluno adicionado com sucesso!");
                     menuPrincipal();
-                    quebraLoop = false;
                     break;
                 default:
                     System.out.println("Opção inválida. Digite novamente!");
-
             }
-            quebraLoop = false;
-            break;
         }
-        Aluno aluno = new Aluno(nome, dataFormatada, turmaSelecionada);
-        listaAlunos.add(aluno);
-        System.out.println("Aluno adicionado com sucesso!");
-        menuPrincipal();
     }
-
-
 
     private static void listarAlunos() {
         if (Aluno.isVazioAlunos()) {
@@ -315,13 +325,11 @@ public class Main {
         }
         for (Aluno a : listaAlunos) {
             if (a.isAtivo()) System.out.printf(
-                "1 - Aluno: %s Turma: %s Data de nascimento: %s ",
+                "Aluno: %s Turma: %s Data de nascimento: %s ",
                 a.getNome(),
                 a.getTurma(),
                 a.getDataNascimento()
             );
         }
     }
-
-
 }

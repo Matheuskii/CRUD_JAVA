@@ -3,8 +3,6 @@ import java.time.Period;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.time.format.ResolverStyle;
-import java.util.ArrayList;
 
 public class Aluno {
 
@@ -12,7 +10,6 @@ public class Aluno {
     private LocalDate dataNascimento;
     private Turma turma;
     private boolean ativo;
-    protected static final ArrayList<Aluno> listaAlunos = new ArrayList<Aluno>();
 
     public Aluno(String nome, LocalDate dataNascimento, Turma turma) {
         this.nome = nome;
@@ -55,8 +52,6 @@ public class Aluno {
 
     //MÉTODOS
 
-
-
     protected static LocalDate convertorParaData() {
         final LocalDate dataAtual = LocalDate.now(ZoneOffset.UTC);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -71,7 +66,7 @@ public class Aluno {
                     nascimento = Leitura.dados("\nDigite a data de nascimento do aluno. dd/mm/year");
                 }
                 boolean teste = nascimento.matches(
-                        "^(?:0[1-9]|[12]\\d|3[01])([/.-])(?:0[1-9]|1[012])\\1(?:19|20)\\d\\d$"
+                    "^(?:0[1-9]|[12]\\d|3[01])([/.-])(?:0[1-9]|1[012])\\1(?:19|20)\\d\\d$"
                 );
 
                 if (!teste) {
@@ -110,12 +105,9 @@ public class Aluno {
                             newData = Aluno.convertorParaData();
                             break;
                         case "turma":
-
                             turmaSelecionada = atualizaTurmaAluno();
 
                             break;
-                        default:
-                            System.out.println("Que opção merda");
                     }
                     System.out.println(atributo + " atualizado com sucesso!");
                     quebraLoop = false;
@@ -137,13 +129,10 @@ public class Aluno {
             Leitura.dados("Aperte Enter para continuar");
             System.out.println("Redirecionando ao menu principal...");
             Main.menuPrincipal();
-
         }
         int idAtualizar = Turma.validarId("turma");
 
-
-        Turma turmaSelecionada = Turma.listaTurmas.get(idAtualizar);
-        return turmaSelecionada;
+        return Main.listaTurmas.get(idAtualizar);
     }
 
     protected static String cadastraNome() {
@@ -153,6 +142,7 @@ public class Aluno {
         }
         return newNome;
     }
+
     protected static boolean isName(String nome) {
         String regex = "^[A-Za-zÀ-ÖØ-öø-ÿ ]+$";
 
@@ -172,36 +162,47 @@ public class Aluno {
             if (nome.contains("-")) {
                 System.out.println("Erro: Hífen não é permitido! Use apenas espaços.");
                 return false;
-
             } else if (Main.isCharacter(nome)) {
                 System.out.println("Erro: O nome não pode conter números!");
                 return false;
-
             } else {
                 System.out.println("Erro: O nome contém símbolos ou caracteres especiais inválidos!");
                 return false;
-
             }
-
         }
     }
-    protected static boolean isVazioAlunos() {
-        if (listaAlunos.isEmpty()) return true;
 
-        for (Aluno aluno : listaAlunos) {
+    protected static boolean isVazioAlunos() {
+        if (Main.listaAlunos.isEmpty()) return true;
+
+        for (Aluno aluno : Main.listaAlunos) {
             if (aluno.isAtivo()) return false;
         }
 
         return true;
-
-
     }
 
-    protected static Aluno VerificadorDadosAlunos(String nome, LocalDate dataFormatada, Turma  turmaSelecionada) {
-        String newName = Aluno.atualizarParcialAluno("nome").nome();
-        LocalDate newdata = Aluno.atualizarParcialAluno("data").dataAniversario();
-        Turma newTurma = Aluno.atualizarParcialAluno("turma").turma();
-
+    protected static Aluno VerificadorDadosAlunos(
+        String nome,
+        LocalDate dataFormatada,
+        Turma turmaSelecionada,
+        String atributo
+    ) {
+        String newName = null;
+        LocalDate newdata = null;
+        Turma newTurma = null;
+        switch (atributo) {
+            case "atTudo":
+                newName = Aluno.atualizarParcialAluno("nome").nome();
+                newdata = Aluno.atualizarParcialAluno("data").dataAniversario();
+                newTurma = Aluno.atualizarParcialAluno("turma").turma();
+            case "atNome":
+                newName = Aluno.atualizarParcialAluno("nome").nome();
+            case "atData":
+                newdata = Aluno.atualizarParcialAluno("data").dataAniversario();
+            case "atTurma":
+                newTurma = Aluno.atualizarParcialAluno("turma").turma();
+        }
 
         if (newName == null) {
             newName = nome;
@@ -213,18 +214,19 @@ public class Aluno {
             newTurma = turmaSelecionada;
         }
         return new Aluno(newName, newdata, newTurma);
-
     }
-    protected static boolean listarAlunosIndice() {
 
-        if (listaAlunos.isEmpty()) {
-            return false;
+    protected static void listarAlunosIndice() {
+        if (Main.listaAlunos.isEmpty()) {
+            return;
         }
         System.out.println("\nLista das Alunos:");
-        for (int i = 0; i < listaAlunos.size(); i++) {
-            if (listaAlunos.get(i).isAtivo()) System.out.printf("\n%d - %s", i + 1, listaAlunos.get(i).getNome());
+        for (int i = 0; i < Main.listaAlunos.size(); i++) {
+            if (Main.listaAlunos.get(i).isAtivo()) System.out.printf(
+                "\n%d - %s",
+                i + 1,
+                Main.listaAlunos.get(i).getNome()
+            );
         }
-        return true;
     }
-
 }

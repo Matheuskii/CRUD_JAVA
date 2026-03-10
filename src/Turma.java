@@ -2,8 +2,6 @@ import java.util.ArrayList;
 
 public class Turma {
 
-    protected static final ArrayList<Turma> listaTurmas = new ArrayList<>();
-
     private String curso;
     private String sigla;
     private Periodo periodo;
@@ -62,14 +60,17 @@ public class Turma {
 
     //MÉTODOS INSANOS
 
-
     protected static boolean listarTurmasIndiceSigla() {
-        if (listaTurmas.isEmpty()) {
+        if (Main.listaTurmas.isEmpty()) {
             return false;
         }
         System.out.println("\nLista das Turmas:");
-        for (int i = 0; i < listaTurmas.size(); i++) {
-            if (listaTurmas.get(i).isAtivo()) System.out.printf("\n%d - %s", i + 1, listaTurmas.get(i).getSigla());
+        for (int i = 0; i < Main.listaTurmas.size(); i++) {
+            if (Main.listaTurmas.get(i).isAtivo()) System.out.printf(
+                "\n%d - %s",
+                i + 1,
+                Main.listaTurmas.get(i).getSigla()
+            );
         }
         return true;
     }
@@ -83,15 +84,15 @@ public class Turma {
                     switch (atributo) {
                         case "período":
                             Periodo periodo = validarPeriodo();
-                            listaTurmas.get(idAtualizar).setPeriodo(periodo);
+                            Main.listaTurmas.get(idAtualizar).setPeriodo(periodo);
                             break;
                         case "curso":
                             String curso = validarCurso();
-                            listaTurmas.get(idAtualizar).setCurso(curso);
+                            Main.listaTurmas.get(idAtualizar).setCurso(curso);
                             break;
                         case "sigla":
                             String sigla = validarSigla();
-                            listaTurmas.get(idAtualizar).setSigla(sigla);
+                            Main.listaTurmas.get(idAtualizar).setSigla(sigla);
                             break;
                     }
                     System.out.println(atributo + " atualizado com sucesso!");
@@ -112,7 +113,7 @@ public class Turma {
             String opcaoPeriodo = Leitura.dados("Deseja modificar o periodo? (S/N)").toUpperCase();
             switch (opcaoPeriodo) {
                 case "S":
-                    listaTurmas.get(idAtualizar).setPeriodo(validarPeriodo());
+                    Main.listaTurmas.get(idAtualizar).setPeriodo(validarPeriodo());
                     rodarNovamente = false;
                     break;
                 case "N":
@@ -145,7 +146,7 @@ public class Turma {
     }
 
     protected static int validarId(String atributo) {
-        String opcao = Leitura.dados("\nDigite o número da " +atributo +" desejada: ");
+        String opcao = Leitura.dados("\nDigite o número da " + atributo + " desejada: ");
         int opcaoValida = -1;
         int opcaoUsuario = -1;
         while (opcaoValida == -1) {
@@ -153,8 +154,8 @@ public class Turma {
 
             if (opcaoUsuario == -1) {
                 System.out.println("Opção inválida! Digite novamente: ");
-                opcao = Leitura.dados("\nDigite o número da " +atributo +" desejada: ");            }
-            else {
+                opcao = Leitura.dados("\nDigite o número da " + atributo + " desejada: ");
+            } else {
                 opcaoValida = opcaoUsuario;
             }
         }
@@ -164,7 +165,7 @@ public class Turma {
     protected static boolean validarSigla(String sigla) {
         if (sigla.isBlank()) return false;
 
-        for (Turma turma : listaTurmas) {
+        for (Turma turma : Main.listaTurmas) {
             if (turma.getSigla().equals(sigla)) {
                 return false;
             }
