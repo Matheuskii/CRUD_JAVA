@@ -78,6 +78,7 @@ public class Aluno {
             String nascimento = Leitura.dados("Digite a data de nascimento do aluno. dd/mm/year");
             try {
                 nascimentoCerto = LocalDate.parse(nascimento, formatter);
+                String nascimentoBr = nascimentoCerto.format(formatter);
                 if (nascimentoCerto.isAfter(dataAtual)) {
                     System.out.println("Não pode nascer no futuro");
                     nascimento = Leitura.dados("\nDigite a data de nascimento do aluno. dd/mm/year");
@@ -91,7 +92,7 @@ public class Aluno {
                     nascimento = Leitura.dados("\nDigite a data de nascimento do aluno. dd/mm/year");
                 }
                 Period periodo = Period.between(nascimentoCerto, dataAtual);
-                System.out.println(nascimentoCerto);
+                System.out.println(nascimentoBr);
                 System.out.println("Idade: " + periodo.getYears());
                 if (periodo.getYears() < 14 || periodo.getYears() > 130) {
                     System.out.println("Idade não permitida para o aluno mínimo 10 e máximo 130");
