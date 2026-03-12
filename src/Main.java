@@ -290,13 +290,13 @@ public class Main {
 
     private static void cadastrarAluno() {
         System.out.println("BEM VINDO AO CADASTRADOR DE ALUNOS");
-        LocalDate dataFormatada;
+        LocalDate dataNascimento;
 
         String nome = Aluno.cadastraNome();
 
-        dataFormatada = Aluno.convertorParaData();
+        dataNascimento = Aluno.convertorParaData();
 
-        Turma turmaSelecionada = Aluno.atualizaTurmaAluno();
+        Turma turma = Aluno.atualizaTurmaAluno();
 
         System.out.printf(
             """
@@ -305,33 +305,11 @@ public class Main {
             Data de Nascimento: %s
             Curso: %s""",
             nome,
-            dataFormatada,
-            turmaSelecionada
+            dataNascimento,
+            turma
         );
 
-        boolean quebraLoop = true;
-        while (quebraLoop) {
-            String confirma = Leitura.dados("\nAs informações do Aluno está correta? (S/N) ").toUpperCase();
-
-            switch (confirma) {
-                case "S":
-                    quebraLoop = false;
-                    Aluno aluno = new Aluno(nome, dataFormatada, turmaSelecionada);
-                    listaAlunos.add(aluno);
-                    System.out.println("Aluno adicionado com sucesso!");
-                    menuPrincipal();
-                    break;
-                case "N":
-                    quebraLoop = false;
-                    Aluno newAluno = Aluno.VerificadorDadosAlunos(nome, dataFormatada, turmaSelecionada);
-                    listaAlunos.add(newAluno);
-                    System.out.println("Aluno adicionado com sucesso!");
-                    menuPrincipal();
-                    break;
-                default:
-                    System.out.println("Opção inválida. Digite novamente!");
-            }
-        }
+        Aluno.confirmaInfoAluno(nome, dataNascimento, turma);
     }
 
     private static void listarAlunos() {

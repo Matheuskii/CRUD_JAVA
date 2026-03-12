@@ -12,13 +12,6 @@ public class Turma {
         this.ativo = true;
     }
 
-    public Turma() {
-        this.curso = "";
-        this.sigla = "";
-        this.periodo = Periodo.MATUTINO;
-        this.ativo = true;
-    }
-
     public String getCurso() {
         return curso;
     }
@@ -106,7 +99,7 @@ public class Turma {
     }
 
     protected static void atualizaPeriodo(int idAtualizar) {
-        boolean rodarNovamente = false;
+        boolean rodarNovamente = true;
         while (rodarNovamente) {
             String opcaoPeriodo = Leitura.dados("Deseja modificar o periodo? (S/N)").toUpperCase();
             switch (opcaoPeriodo) {
@@ -180,18 +173,15 @@ public class Turma {
             3 - Noturno
             4 - Integral"""
         );
-        switch (opcaoPeriodo) {
-            case "1":
-                return Periodo.MATUTINO;
-            case "2":
-                return Periodo.VESPERTINO;
-            case "3":
-                return Periodo.NOTURNO;
-            case "4":
-                return Periodo.INTEGRAL;
-            default:
+        return switch (opcaoPeriodo) {
+            case "1" -> Periodo.MATUTINO;
+            case "2" -> Periodo.VESPERTINO;
+            case "3" -> Periodo.NOTURNO;
+            case "4" -> Periodo.INTEGRAL;
+            default -> {
                 System.out.println("Opção inválida, digite novamente");
-                return validarPeriodo();
-        }
+                yield validarPeriodo();
+            }
+        };
     }
 }
