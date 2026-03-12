@@ -1,4 +1,5 @@
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -269,6 +270,7 @@ public class Main {
         String nome = listaAlunos.get(idAtualizar).getNome();
         LocalDate data = listaAlunos.get(idAtualizar).getDataNascimento();
         Turma turma = listaAlunos.get(idAtualizar).getTurma();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         System.out.printf(
             """
@@ -277,7 +279,7 @@ public class Main {
             Data de Nascimento: %s
             Curso: %s""",
             nome,
-            data,
+            data.format(formatter),
             turma
         );
         Aluno dados = Aluno.VerificadorDadosAlunos(nome, data, turma);
@@ -297,6 +299,7 @@ public class Main {
         dataNascimento = Aluno.convertorParaData();
 
         Turma turma = Aluno.atualizaTurmaAluno();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         System.out.printf(
             """
@@ -305,7 +308,7 @@ public class Main {
             Data de Nascimento: %s
             Curso: %s""",
             nome,
-            dataNascimento,
+            dataNascimento.format(formatter),
             turma
         );
 

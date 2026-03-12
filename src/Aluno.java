@@ -60,10 +60,11 @@ public class Aluno {
 
     @Override
     public String toString() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         return String.format(
-            "Aluno [Nome: %-15s | Nasc: %s | Turma: %-10s | Status: %s]",
+            "Aluno [Nome: %s | Nasc: %s | Turma: %-10s | Status: %s]",
             nome,
-            dataNascimento,
+            dataNascimento.format(formatter),
             (turma != null ? turma : "Sem Turma"),
             (ativo ? "Ativo" : "Inativo")
         );
@@ -86,7 +87,7 @@ public class Aluno {
                 System.out.println(nascimentoBr);
             } catch (DateTimeParseException e) {
                 System.out.println("A data não está formatada corretamente. dd/mm/yyyy ");
-                System.out.println("Ou ce foi bobao e colocou 29/02 num ano q n é bissexto vacilaum")
+                System.out.println("Ou ce foi bobao e colocou 29/02 num ano q n é bissexto vacilaum");
             }
         }
         return nascimentoCerto;
@@ -107,7 +108,6 @@ public class Aluno {
             System.out.println("Redirecionando ao menu...");
             Main.menuAlunos();
         }
-
     }
 
     protected static DadosModificados atualizarParcialAluno(String atributo) {
