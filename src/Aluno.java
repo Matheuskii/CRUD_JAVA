@@ -72,7 +72,7 @@ public class Aluno {
     //MÉTODOS
 
     protected static LocalDate convertorParaData() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy").withResolverStyle(ResolverStyle.STRICT);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu").withResolverStyle(ResolverStyle.STRICT);
         LocalDate nascimentoCerto = null;
 
         while (nascimentoCerto == null) {
@@ -86,6 +86,7 @@ public class Aluno {
                 System.out.println(nascimentoBr);
             } catch (DateTimeParseException e) {
                 System.out.println("A data não está formatada corretamente. dd/mm/yyyy ");
+                System.out.println("Ou ce foi bobao e colocou 29/02 num ano q n é bissexto vacilaum")
             }
         }
         return nascimentoCerto;
@@ -96,7 +97,7 @@ public class Aluno {
         System.out.println(nascimentoCerto.getMonth());
         System.out.println(nascimentoCerto.getDayOfMonth());
         if (nascimentoCerto.isAfter(dataAtual)) {
-            System.out.println("Não pode nascer no futuro");
+            System.out.println("A data não pode ser no dia de hj ou amanhã");
             Main.menuPrincipal();
         }
         Period periodo = Period.between(nascimentoCerto, dataAtual);
@@ -106,15 +107,7 @@ public class Aluno {
             System.out.println("Redirecionando ao menu...");
             Main.menuAlunos();
         }
-        if (!nascimentoCerto.isLeapYear()) {
-            Month mes = nascimentoCerto.getMonth();
-            if (mes == Month.FEBRUARY) {
-                int dia = nascimentoCerto.getDayOfMonth();
-                if (dia > 29) {
-                    System.out.println("Dia ruim num dia bom");
-                }
-            }
-        }
+
     }
 
     protected static DadosModificados atualizarParcialAluno(String atributo) {
